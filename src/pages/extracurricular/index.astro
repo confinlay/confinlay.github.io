@@ -4,6 +4,7 @@ import PageLayout from "@layouts/PageLayout.astro";
 import Container from "@components/Container.astro";
 import { dateRange } from "@lib/utils";
 import { EXTRACURRICULAR } from "@consts";
+import Link from "@components/Link.astro";
 
 const collection = (await getCollection("extracurricular"))
   .sort((a, b) => new Date(b.data.dateStart).valueOf() - new Date(a.data.dateStart).valueOf());
@@ -30,7 +31,13 @@ const extracurricular = await Promise.all(
                 {dateRange(entry.data.dateStart, entry.data.dateEnd)}
               </div>
               <div class="font-semibold text-black dark:text-white">
-                {entry.data.organization}
+                {entry.data.website ? (
+                  <Link href={entry.data.website} external>
+                    {entry.data.organization}
+                  </Link>
+                ) : (
+                  entry.data.organization
+                )}
               </div>
               <div class="text-sm opacity-75">
                 {entry.data.role}

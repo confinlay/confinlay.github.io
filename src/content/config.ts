@@ -41,6 +41,7 @@ const extracurricular = defineCollection({
     dateStart: z.coerce.date(),
     dateEnd: z.union([z.coerce.date(), z.string()]),
     summary: z.string().optional(),
+    website: z.string().optional(),
   }),
 });
 

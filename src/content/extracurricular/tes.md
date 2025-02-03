@@ -4,6 +4,7 @@ role: "Incubator Manager"
 dateStart: "06/01/2024"
 dateEnd: "Present"
 summary: "Managing TES Incubator Program supporting 14 student startup teams through mentorship and resources"
+website: "https://testrinity.com/"
 ---
 
 I'm running TES's student startup incubator program this year. It's been a really rewarding experience working with early-stage founders who are just getting started. Some highlights:
