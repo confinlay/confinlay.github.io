@@ -28,6 +28,17 @@ const work = await Promise.all(
   })
 );
 
+const allextracurricular = (await getCollection("extracurricular"))
+  .sort((a, b) => new Date(b.data.dateStart).valueOf() - new Date(a.data.dateStart).valueOf())
+  .slice(0,SITE.NUM_WORKS_ON_HOMEPAGE);
+
+const extracurricular = await Promise.all(
+  allextracurricular.map(async (item) => {
+    const { Content } = await item.render();
+    return { ...item, Content };
+  })
+);
+
 ---
 
 <PageLayout title={HOME.TITLE} description={HOME.DESCRIPTION}>
@@ -39,16 +50,21 @@ const work = await Promise.all(
       <section>
         <article class="space-y-4">
           <p class="animate">
-            I'm a final computer engineering student at Trinity College Dublin. I love building things, and have become particularly interested in AI over the past year or two. 
+            I'm a final year Computer Engineering student at Trinity College Dublin. I have software engineering experience, both in a mid-sized company and in a startup, and I've been involved 
+            with the entrepreneurship scene in my university while studying. More recently, I've become very interested in AI and am currently doing some research as part of my Master's thesis.
             
           </p>
           <p class="animate">
-            I'm graduating in a few months time, and I'm looking forward to getting started with something as soon as possible. My interests are broad- 
-            I'd love to be working on something related to AI, but so long as there are interesting problems to solve, I'm all ears. 
+            For now, this website isn't much more than a resume, but I'm hoping to add more to it as time goes on. 
+            I'm graduating in a few months time, and I'm looking forward to getting started with something as soon as possible. 
+
           </p>
           <p class="animate">
-            Basically, anything on the spectrum of Sofware Engineer - AI/ML Engineer - AI/ML Research Engineer - AI/ML Researcher interests me. 
-            I'm still figuring out exactly where I will land on that spectrum, but that's what experience is for (give me a chance!).
+            I'm mainly looking for engineering roles, but my interests are broad and as long as there are interesting problems to solve, I'm all ears. I'd particularly like
+            to be working on something related to AI, and I'm definitely open to more research-oriented roles.
+          </p>
+          <p class="animate">
+            You can check out some of my experience below, and stay tuned for some more interesting content here!
           </p>
         </article>
       </section>
@@ -82,14 +98,12 @@ const work = await Promise.all(
         </ul>
       </section>
 
+
       <section class="animate space-y-6">
         <div class="flex flex-wrap gap-y-2 items-center justify-between">
           <h5 class="font-semibold text-black dark:text-white">
-            Recent projects
+            Projects
           </h5>
-          <Link href="/projects">
-            See all projects
-          </Link>
         </div>
         <ul class="flex flex-col gap-4">
           {projects.map(project => (
@@ -103,16 +117,27 @@ const work = await Promise.all(
       <section class="animate space-y-6">
         <div class="flex flex-wrap gap-y-2 items-center justify-between">
           <h5 class="font-semibold text-black dark:text-white">
-            Latest posts
+            Other Roles
           </h5>
-          <Link href="/blog">
-            See all posts
+          <Link href="/extracurricular">
+            See more
           </Link>
         </div>
-        <ul class="flex flex-col gap-4">
-          {blog.map(post => (
+        <ul class="flex flex-col space-y-4">
+          {extracurricular.map(entry => (
             <li>
-              <ArrowCard entry={post} />
+              <div class="text-sm opacity-75">
+                {dateRange(entry.data.dateStart, entry.data.dateEnd)}
+              </div>
+              <div class="font-semibold text-black dark:text-white">
+                {entry.data.organization}
+              </div>
+              <div class="text-sm opacity-75">
+                {entry.data.role}
+              </div>
+              <article>
+                {entry.data.summary}
+              </article>
             </li>
           ))}
         </ul>

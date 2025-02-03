@@ -7,7 +7,6 @@ import rehypeKatex from 'rehype-katex';
 
 export default defineConfig({
   site: "https://confinlay.github.io",
-  base: "/portfolio-website",
   integrations: [mdx(), sitemap(), tailwind()],
   markdown: {
     remarkPlugins: [remarkMath],

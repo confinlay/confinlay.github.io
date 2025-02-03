@@ -28,6 +28,11 @@ export const PROJECTS: Metadata = {
   DESCRIPTION: "A collection of my projects, with links to repositories and demos.",
 };
 
+export const EXTRACURRICULAR = {
+  TITLE: "Extracurricular Activities | Conor Finlay",
+  DESCRIPTION: "My extracurricular activities and leadership roles.",
+};
+
 export const SOCIALS: Socials = [
   { 
     NAME: "twitter-x",

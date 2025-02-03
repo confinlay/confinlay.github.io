@@ -1,17 +1,19 @@
 ---
 title: "Towards Inherently Interpretable Bayesian Neural Networks"
 description: "My Master's Thesis on Bayesian Deep Learning"
-date: "April 18 2025"
+date: "Nov 12 2024"
 repoURL: "https://github.com/confinlay/Last-layer-CLUE"
 ---
 
-# Master's Thesis on Bayesian Deep Learning - 2024/2025
+This year I'm working on a research project in the area of Bayesian Deep Learning as part of my Master's degree in Computer Engineering. It's still a work-in-progress, but I've included an adapted version of my project proposal below. I'll try to update this often as the scope/direction of my project evolves, but I'll certainly be writing a more detailed blog post on the project once it's complete.
 
-This repository contains a work-in-progress implementation of my Master's thesis project, which will investigate how Bayesian last-layer neural network architectures can be leveraged to improve existing methods for explaining uncertainty. The primary objective will be to adapt an influential method of explaining uncertainty, CLUE (Counterfactual Latent Uncertainty Explanations)[^1], such that it exploits the architecture of Bayesian last-layer neural networks. The proposed method will align uncertainty explanations with the internal representations of the predictive model while reducing computational overhead.
 
-I am pursuing this project in fulfilment of my Master's degree in Computer Engineering at Trinity College Dublin, from which I will graduate in Autumn 2025. This project will be completed by April 2025, at which point I will publish my thesis write-up here.
+> ### TLDR
+> Bayesian neural networks differ from traditional neural networks in that they express a more theoretically grounded estimate of their uncertainty. While uncertainty estimates provide a level of interpretability in and of themselves, work has been done in the Explainable AI (XAI) community to provide **explanations** for these uncertainty estimates.
+> These explanations for uncertainty often involve using separate generative models to find counterfactuals which explain the uncertainty in the original prediction. This project seeks to investigate how recent advances in partially Bayesian inference can allow for Bayesian neural networks which are **inherently interpretable**.
 
-Currently, this README contains a short description of my project idea/proposal. I will update it with implementation details as I progress.
+
+
 
 ## Background and Motivation
 

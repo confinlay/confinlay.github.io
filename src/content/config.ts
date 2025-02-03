@@ -33,4 +33,15 @@ const projects = defineCollection({
   }),
 });
 
-export const collections = { blog, work, projects };
+const extracurricular = defineCollection({
+  type: "content",
+  schema: z.object({
+    organization: z.string(),
+    role: z.string(),
+    dateStart: z.coerce.date(),
+    dateEnd: z.union([z.coerce.date(), z.string()]),
+    summary: z.string().optional(),
+  }),
+});
+
+export const collections = { blog, work, projects, extracurricular };
