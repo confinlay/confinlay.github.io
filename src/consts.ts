@@ -29,7 +29,7 @@ export const PROJECTS: Metadata = {
 };
 
 export const EXTRACURRICULAR = {
-  TITLE: "Extracurricular Activities | Conor Finlay",
+  TITLE: "Other Roles",
   DESCRIPTION: "My extracurricular activities and leadership roles.",
 };
 
