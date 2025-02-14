@@ -30,13 +30,13 @@
       // Toggle main TOC
       tocButton.addEventListener('click', () => {
         const isExpanded = tocButton.getAttribute('aria-expanded') === 'true';
-        tocButton.setAttribute('aria-expanded', !isExpanded);
+        tocButton.setAttribute('aria-expanded', String(!isExpanded));
         tocContent.classList.toggle('collapsed');
         tocButton.querySelector('svg')?.classList.toggle('rotate-180');
       });
   
-      function createNestedTOC(headings) {
-        const toc = [];
+      function createNestedTOC(headings: Array<{ tagName: string; id: string; textContent: string }>) {
+        const toc: Array<{ id: string; title: string; level: number; children: any[] }> = [];
         const stack = [{ level: 0, children: toc }];
     
         headings.forEach((heading) => {
@@ -45,7 +45,7 @@
             id: heading.id,
             title: heading.textContent,
             level,
-            children: []
+            children: [] as any[]
           };
     
           while (level <= stack[stack.length - 1].level) {
@@ -58,7 +58,7 @@
         return toc;
       }
     
-      function renderTOCItem(item) {
+      function renderTOCItem(item: { id: string; title: string; level: number; children: any[] }): string {
         const hasChildren = item.children && item.children.length > 0;
         return `
           <li class="toc-item" data-heading-id="${item.id}">
@@ -79,7 +79,7 @@
             </div>
             ${hasChildren ? `
               <ul class="nested-toc space-y-1">
-                ${item.children.map(child => renderTOCItem(child)).join('')}
+                ${item.children.map((child) => renderTOCItem(child)).join('')}
               </ul>
             ` : ''}
           </li>
@@ -87,16 +87,21 @@
       }
     
       function updateActiveHeading() {
-        const headings = Array.from(document.querySelectorAll("article h1, article h2, article h3, article h4, article h5, article h6"))
-          .filter((element) => element.id);
+        // Get all heading elements and cast them to HTMLElement
+        const headingElements = Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6')) as HTMLElement[];
+        const headingsData = headingElements.map(heading => ({
+          tagName: heading.tagName,
+          id: heading.id,
+          textContent: heading.textContent || ''
+        }));
     
         if (!tocList) return;
     
-        // Build nested TOC
-        const nestedTOC = createNestedTOC(headings);
+        // Build the nested TOC and render it.
+        const nestedTOC = createNestedTOC(headingsData);
         tocList.innerHTML = nestedTOC.map(item => renderTOCItem(item)).join('');
     
-        // Add click handlers for section toggles
+        // Add click handlers for any section toggle buttons.
         document.querySelectorAll('.section-toggle').forEach(button => {
           button.addEventListener('click', (e) => {
             e.preventDefault();
@@ -107,28 +112,47 @@
           });
         });
     
-        // Set up intersection observer
-        const observer = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                document.querySelectorAll(".toc-item a").forEach(link => {
-                  link.classList.remove("text-black", "dark:text-white", "font-medium");
-                  link.classList.add("text-gray-500", "dark:text-gray-400");
-                });
-                
-                const activeLink = document.querySelector(`.toc-item[data-heading-id="${entry.target.id}"] a`);
-                if (activeLink) {
-                  activeLink.classList.remove("text-gray-500", "dark:text-gray-400");
-                  activeLink.classList.add("text-black", "dark:text-white", "font-medium");
-                }
-              }
-            });
-          },
-          { rootMargin: "0% 0% -80% 0%" }
-        );
+        // This function updates the active TOC link based on scroll position.
+        const updateActiveTOC = () => {
+          const headerOffset = 80; // Adjust to match your fixed header's height.
+          const scrollPosition = window.scrollY + headerOffset + 1;
+          let activeId: string | null = null;
     
-        headings.forEach((heading) => observer.observe(heading));
+          // Loop through headings; the last one whose offset is above the scrollPosition becomes the active section.
+          for (let i = 0; i < headingElements.length; i++) {
+            const heading = headingElements[i];
+            if (heading.offsetTop <= scrollPosition) {
+              activeId = heading.id;
+            } else {
+              break;
+            }
+          }
+    
+          // Reset styles for all TOC links.
+          document.querySelectorAll(".toc-item a").forEach(link => {
+            link.classList.remove("text-black", "dark:text-white", "font-medium");
+            link.classList.add("text-gray-500", "dark:text-gray-400");
+          });
+    
+          // Highlight the active TOC link, if one is determined.
+          if (activeId) {
+            const activeLink = document.querySelector(`.toc-item[data-heading-id="${activeId}"] a`);
+            if (activeLink) {
+              activeLink.classList.remove("text-gray-500", "dark:text-gray-400");
+              activeLink.classList.add("text-black", "dark:text-white", "font-medium");
+            }
+          }
+        };
+    
+        // Remove any previous scroll listener.
+        if ((window as any)._tocScrollListener) {
+          window.removeEventListener("scroll", (window as any)._tocScrollListener);
+        }
+        (window as any)._tocScrollListener = updateActiveTOC;
+        window.addEventListener("scroll", updateActiveTOC);
+    
+        // Update once on initialization.
+        updateActiveTOC();
       }
 
       // Run updateActiveHeading immediately
@@ -177,7 +201,7 @@
     }
   
     /* Responsive */
-    @media (max-width: 1024px) {
+    @media (max-width: 768px) {
       .toc-container {
         @apply max-w-full;
       }

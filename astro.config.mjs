@@ -12,7 +12,10 @@ export default defineConfig({
   site: "https://confinlay.github.io",
   integrations: [mdx(), sitemap(), tailwind()],
   markdown: {
-    remarkPlugins: [remarkMath, remarkToc, { heading: "contents" }],
+    remarkPlugins: [
+      remarkMath,
+      [remarkToc, { heading: "contents" }]
+    ],
     rehypePlugins: [
       rehypeKatex,
       rehypeSlug,
