@@ -1,6 +1,6 @@
 ---
 title: "Towards Inherently Interpretable Bayesian Neural Networks"
-description: "My Master's Thesis on Bayesian Deep Learning"
+description: "My project proposal for a Master's thesis on Bayesian deep learning"
 date: "Nov 12 2024"
 repoURL: "https://github.com/confinlay/Last-layer-CLUE"
 ---

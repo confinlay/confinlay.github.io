@@ -6,6 +6,7 @@ import FormattedDate from "@components/FormattedDate.astro";
 import { readingTime } from "@lib/utils";
 import BackToPrev from "@components/BackToPrev.astro";
 import Link from "@components/Link.astro";
+import TableOfContents from "@components/TableOfContents.astro";
 
 export async function getStaticPaths() {
   const projects = (await getCollection("projects"))
@@ -23,45 +24,52 @@ const { Content } = await project.render();
 ---
 
 <PageLayout title={project.data.title} description={project.data.description}>
-  <Container>
-    <div class="animate">
-      <BackToPrev href="/projects">
-        Back to projects
-      </BackToPrev>
-    </div>
-    <div class="space-y-1 my-10">
-      <div class="animate flex items-center gap-1.5">
-        <div class="font-base text-sm">
-          <FormattedDate date={project.data.date} />
-        </div>
-        &bull;
-        <div class="font-base text-sm">
-          {readingTime(project.body)}
-        </div>
+  <Container class={project.data.toc ? "xl:max-w-[1200px]" : ""}>
+    <div>
+      <div class="animate">
+        <BackToPrev href="/projects">
+          Back to projects
+        </BackToPrev>
       </div>
-      <div class="animate text-2xl font-semibold text-black dark:text-white">
-        {project.data.title}
+      <div class="space-y-1 my-10">
+        <div class="animate flex items-center gap-1.5">
+          <div class="font-base text-sm">
+            <FormattedDate date={project.data.date} />
+          </div>
+          &bull;
+          <div class="font-base text-sm">
+            {readingTime(project.body)}
+          </div>
+        </div>
+        <div class="animate text-2xl font-semibold text-black dark:text-white">
+          {project.data.title}
+        </div>
+        {(project.data.demoURL || project.data.repoURL) && (
+          <nav class="animate flex gap-1">
+            {project.data.demoURL && (
+              <Link href={project.data.demoURL} external>
+                demo
+              </Link>
+            )}
+            {project.data.demoURL && project.data.repoURL && (
+              <span>/</span>
+            )}
+            {project.data.repoURL && (
+              <Link href={project.data.repoURL} external>
+                repo
+              </Link>
+            )}
+          </nav>
+        )}
       </div>
-      {(project.data.demoURL || project.data.repoURL) && (
-        <nav class="animate flex gap-1">
-          {project.data.demoURL && (
-            <Link href={project.data.demoURL} external>
-              demo
-            </Link>
-          )}
-          {project.data.demoURL && project.data.repoURL && (
-            <span>/</span>
-          )}
-          {project.data.repoURL && (
-            <Link href={project.data.repoURL} external>
-              repo
-            </Link>
-          )}
-        </nav>
-      )}
+      <article class="animate prose dark:prose-invert max-w-none">
+        <Content />
+      </article>
     </div>
-    <article class="animate">
-      <Content />
-    </article>
+    {project.data.toc && (
+      <div slot="toc" class="sticky top-24">
+        <TableOfContents />
+      </div>
+    )}
   </Container>
 </PageLayout>
