@@ -100,7 +100,10 @@ The section following this one will discuss alternative methods of projecting ch
 They propose keeping the latent embeddings of a few training data points from each class. To sample a new point for generation, you take a **convex combination** of the saved embeddings for the target class. They mathematically demonstrate that this guarantees the new point will be of the same class. So, new points are sampled according to the following formula:
 
 $$
-z_{\text{new}} = \alpha_1 z_1 + \alpha_2 z_2 + \dots + \alpha_n z_n, \quad \text{where} \quad \sum_{i=1}^n \alpha_i = 1, \, \alpha_i \geq 0.
+\begin{aligned}
+z_{\text{new}} &= \alpha_1 z_1 + \alpha_2 z_2 + \dots + \alpha_n z_n, \\
+&\text{where } \sum_{i=1}^n \alpha_i = 1, \, \alpha_i \geq 0.
+\end{aligned}
 $$
 
 If we wanted to leverage this to make sure our exploration is on manifold, we could do the following:
