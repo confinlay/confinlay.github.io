@@ -8,9 +8,6 @@
         aria-controls="toc-list"
       >
         Table of Contents
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transform transition-transform duration-200">
-          <polyline points="6 9 12 15 18 9"></polyline>
-        </svg>
       </button>
     </div>
     <div class="toc-content" id="toc-content">
@@ -32,7 +29,6 @@
         const isExpanded = tocButton.getAttribute('aria-expanded') === 'true';
         tocButton.setAttribute('aria-expanded', String(!isExpanded));
         tocContent.classList.toggle('collapsed');
-        tocButton.querySelector('svg')?.classList.toggle('rotate-180');
       });
   
       function createNestedTOC(headings: Array<{ tagName: string; id: string; textContent: string }>) {
@@ -66,7 +62,7 @@
               <span></span>
               ${hasChildren ? `
                 <button class="section-toggle p-0.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transform transition-transform duration-200 rotate-180">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transform transition-transform duration-200">
                     <polyline points="6 9 12 15 18 9"></polyline>
                   </svg>
                 </button>
@@ -107,7 +103,10 @@
             e.preventDefault();
             const listItem = button.closest('li');
             const nestedToc = listItem?.querySelector('.nested-toc');
-            button.querySelector('svg')?.classList.toggle('rotate-0');
+            const svg = button.querySelector('svg');
+            if (svg) {
+              svg.classList.toggle('rotate-180');
+            }
             nestedToc?.classList.toggle('hidden');
           });
         });

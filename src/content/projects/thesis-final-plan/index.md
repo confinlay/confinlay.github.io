@@ -4,20 +4,32 @@ description: "A roadmap for my Master's thesis"
 date: "Feb 14 2025"
 toc: true
 ---
-See below a final plan I put together for the last few months of my Master's Thesis. It's a document I developed for my own use, so it's a little informal and not really optimised to be read as an article. Nonetheless, I thought it might be useful to publish it here while my research is still ongoing. You can also find my initial proposal for the project [here](/projects/thesis).
+See below a final plan I put together for the last few months of my Master's Thesis. It's a document I developed for my own use, so it's a little informal and not really optimised to be read as an article. Nonetheless, I thought it might be useful to publish it here while my research is still ongoing. You can also find my initial proposal for the project, which builds some these concepts a bit more from the ground up, [here](/projects/thesis).
 
 
 ---
 
-The core goal of my dissertation is to explore how Bayesian last-layer classifiers can allow *explainability* to be achieved by studying the internal latent space of a classification model. The two key motivations for this are:
+## Background and Motivation
+The core goal of my dissertation is to explore how Bayesian last-layer classifiers can allow *explainability* to be achieved by studying the internal latent space of a classification model. 
 
-1. keeping the first $n-1$ layers of the network deterministic allows for a consistent mapping from input space $x$ to latent space $z$ 
-2. guiding our exploration of the aforementioned latent space with the epistemic and aleatoric uncertainties derived from the Bayesian last layer *implicitly regularises the optimisation to stay on the data manifold.* This has been demonstrated by previous research.
+Bayesian neural networks learn a distribution over their weights, rather than point estimates like in classic neural networks, allowing them to provide strong uncertainty estimates for their predictions. Bayesian last-layer networks modify this by learning a distribution over only the final layer's weights, and have been shown to provide comparable performance to fully Bayesian equivalents. This separates the model's representation learning (deterministic) from it's prediction learning (Bayesian), which has some interesting implications. 
+
+For this dissertation, keeping the first $n-1$ layers of the network deterministic allows us to explore the latent space $z$ of the model while projecting changes back to the input space $x$, all without losing the uncertainty estimates associated with the Bayesian last layer. Since the final layer is still Bayesian, we can guide our exploration of the latent space using the epistemic and aleatoric uncertainties derived from this Bayesian last layer. 
+
+That is, if we feed the latent representations at each step of the exploration through the final layer, the predictions obtained will have fully calibrated Bayesian uncertainty estimates since all of the learned uncertainty estimation is contained within the final layer (i.e. we have not 'skipped' any of the layers necessary for the uncertainty estimation). Previous research has demonstrated that this sort of uncertainty-guided optimisation *implicitly regularises the optimisation to stay on the data manifold.* (i.e. we only explore points in the latent space which correspond to realistic inputs). While this previous research guides an exploration of the input space, leveraging the the uncertainty estimates derived from the entire network, the use of a Bayesian last layer will allow us to conduct our exploration in the more meaningful *latent space*.
+
+<aside>
+
+The next few sections cover some of the background research which motivates the various approaches I have proposed for this dissertation. This starts with a discussion of the relevant XAI methods, before moving on to discuss the structure of the latent space of a classification model and how it might be made more generative by a Bayesian last layer. We then consider ways we might seek to make the latent space of a classifier *more generative*, before developing a proposal for how we might project changes back to the input space, providing feature attribution-based explanations and forgoing the need to generate counterfactual explanations altogether. Finally, we outline a method which could utilise these feature attributions to iteratively generate counterfactual explanations. 
+
+After these discussions, I also provide a roadmap for implementing what will likely be a subset of the proposed approaches. Like I said in the introduction, this document is more of a personal roadmap, so the ideas outlined may not include all the necessary context. Nonetheless, I hope it is useful for anyone who is interested in the project!
+
+</aside>
 
 ---
 
 
-## 1) General discussion of XAI methods
+## General discussion of XAI methods
 
 The field of eXplainable AI is vast, and there have been several attempts to provide a taxonomy for the classification of explanation methods. One such example can be seen below:
 
@@ -53,7 +65,6 @@ However, CLUE often does indeed change the prediction. After all, the generative
 The second point can be demonstrated by a subsequent paper “**Generating Interpretable Counterfactual Explanations By Implicit Minimisation of Epistemic and Aleatoric Uncertainties**”[^2]. This paper manages to generate counterfactuals without a generative model. By using deep ensembles to provide estimates of epistemic and aleatoric uncertainties (approximately Bayesian), they are able to guide a direct exploration of the input space to stay on manifold while attempting to change the class of the prediction. The results are quite remarkable - they were able to make alterations to the input images (MNIST) which produced new, realistic digits, with no generative model. This demonstrates the ability of Bayesian uncertainty estimates to approximate the data manifold.
 
 <aside>
-‼️
 
 My goal in this dissertation is to take inspiration from both of these. A separate generative model is clearly *not necessary* in order to remain close to the data manifold, so long as you have strong Bayesian uncertainty estimates to act as a proxy. However, this does not mean that you have to optimise within the unconstrained and high-dimensional input space. I suggest that we can explore the internal latent space of the classification model. Sure, it isn’t optimised to model the data manifold like the latent space of a VAE, but if we can constrain a search in *input space* to stay on manifold with uncertainty estimates, we can certainly do the same for the lower-dimensional and discriminative latent space of the classification model. Besides, as we will explore later, the latent space of the classification does model the data distribution, just in a different way.
 
@@ -61,7 +72,7 @@ My goal in this dissertation is to take inspiration from both of these. A separa
 
 ---
 
-## 2) Finding counterfactuals and impositions of linearity
+## Finding counterfactuals and impositions of linearity
 
 This section should discuss the big thesis, how these approaches seem to rely on simple, linear classifiers such that the decision boundary is easily identifiable. Overly simple models are implied to be necessary for interpretability.
 
@@ -70,17 +81,17 @@ We have already discussed methods which explore a latent space which models the 
 - The paper “An Interpretable Deep Classifier for Counterfactual Generation”[^3] imposes a supervised objective on a generative model (a VAE + normalising flows). However, the classifier is a Bayesian probit linear regression model, and the method relies on this by finding a trajectory in latent space which crosses the decision boundary. This is in contrast with the gradient-descent optimisation, which is necessary to cross a highly non-linear decision boundary in a neural network classifier.
 - The PhD thesis “Understanding and Exploiting the Latent Space to Improve Machine Learning Models eXplainability”[^4] takes this a step further and learns a linear transformation from input to latent space. It demonstrates that this is “inherently interpretable”, but the trade-off between interpretability and performance is clearly present. This approach is unworkable on a non-linear differentiable model like a neural network. **A useful observation from this paper, however, is that latent spaces which are optimised to place data with similar *prediction labels* near one another produce more robust counterfactual explanations (i.e. less likely to be adversarial)**. This bodes well for our approach, as this applies in the classification latent space but not the generative.
 
-I identify a gap here - methods which directly acknowledge the utility of exploring the latent space upon which the decision boundary is drawn in search of counterfactuals which explain that decision boundary tend to impose linearity to either the representation learning, the prediction learning, or both. Methods that are suitable for use on black-box models usually explore a generative latent space which has nothing to do with the decision boundary of the black box in question. 
+I identify a gap here - methods that directly acknowledge the utility of exploring the latent space *upon which the decision boundary is drawn* in search of counterfactuals that explain *that decision boundary* tend to impose linearity to either the representation learning, the prediction learning, or both. On the other hand, methods that are suitable for use on black-box models (i.e. that don't impose linearity) usually explore a *generative* latent space which has nothing to do with the decision boundary of the black box in question. 
 
 ---
 
-## 3) Generative vs. non-generative latent spaces
+## Generative vs. non-generative latent spaces
 
 We have discussed the fact that, while the latent space of a classifier is not optimised to model the data distribution, and instead learns to represent the data in such a way that it is highly discriminative, we can guide our optimisation to regions of the latent space that are *in distribution.* However, this doesn’t fully solve the problems of generating counterfactuals - the latent space may indeed have regions where it models a portion of the data distribution, but this does not mean that it retains enough information to reconstruct the data. The non-linear mapping $x→z$ of a neural network is not inherently invertible, particularly if a reconstruction loss is not included in the optimisation objective. 
 
 The section following this one will discuss alternative methods of projecting changes in the latent space back to the input dimensions, but first we will discuss two pieces of research that seek to understand the generative capacity of the classifier’s latent space.
 
-### (a) ReGene and connections to prototypes
+### ReGene and connections to prototypes
 
 **ReGene** is an approach developed in “Classify and Generate: Using Classification Latent Space Representations for Image Generations”[^5] that acts as an alternative to conditional generative models for class-condition generations. Similarly to what we are considering, the paper first trains a classifier and then trains a decoder to reconstruct the image data from the latent space that lies at the penultimate layer. The crucial insight from the paper is its method for controlled generation and staying in distribution. 
 
@@ -110,15 +121,14 @@ $$
 We can then gradually adjust the weights $\alpha_i$ to explore the latent space during our optimisation.
 
 <aside>
-‼️
 
-This ties in quite interestingly with the concept of ***prototypes*** from XAI. Here, the saved latent embeddings are the prototypes from the training set, and the $\alpha$ values at the end of the optimisation represent the importance of each prototype for reducing uncertainty. In other words, if $\alpha$ for a particular embedding is strong, the message is “be more like this data point to reduce uncertainty”. 
+ This ties in quite interestingly with the concept of ***prototypes*** from XAI. Here, the saved latent embeddings are the prototypes from the training set, and the $\alpha$ values at the end of the optimisation represent the importance of each prototype for reducing uncertainty. In other words, if $\alpha$ for a particular embedding is strong, the message is “be more like this data point to reduce uncertainty”. 
+ - This doesn’t even require generative capacity.
+ - You could encourage sparsity and penalise distance from the original point, encouraging the selection of 1 or 2 prototypes.
 
-- This doesn’t even require generative capacity.
-- You could encourage sparsity and penalise distance from the original point, encouraging the selection of 1 or 2 prototypes.
 </aside>
 
-### (b) The latent distribution of the classifier
+### The latent distribution of the classifier
 
 The paper “On The Distribution of Penultimate Activations of Classification Networks”[^6] shows that the activations in the penultimate layer of a classifier approximately follow a vMF distribution (seen below) when the network is trained with cross-entropy loss. The paper provides some applications for this observation which are not relevant to this dissertation, but it will be a useful paper to turn to when seeking to theoretically understand the latent space we are exploring.
 
@@ -141,11 +151,11 @@ Indeed, if the latent space is governed by the weights of the final layer, then 
 
 ---
 
-## 4) Solutions for making the model more inherently generative
+## Solutions for making the model more inherently generative
 
 There are some ways in which we can make the model more *inherently generative.* In other words, if the base architecture does not allow for high-quality counterfactuals to be decoded from new points in the latent space, then we can alter the architecture of the model to be more conducive to this goal. This strays from the objective of defining an “interpretability method” and instead aims to design an “inherently interpretable model”.
 
-### (a) Supervised Variational Autoencoder
+### Supervised Variational Autoencoder
 
 This solution is quite straightforward - train a supervised autoencoder. This is essentially the same as our base approach with a dual training objective (i.e. some penalty for reconstruction loss). This difference is that the encoder part of the setup learns a distribution over the latent space ($\mu$ and $\sigma$) and *re-samples* the latent points before each reconstruction when training the decoder. This regularises and smoothes the latent space, allowing for interpolation in the latent space and, indeed, generation. A classifier is trained on this same latent space, only it classifier the $\mu$ of the encoding, so we ignore the stochastic aspect of the encoder for the supervised objective. We can alter the weights of the reconstruction loss, KL divergence, and classification loss during training as we see fit, and SVAEs often exhibit near comparable performance to regular classifiers.
 
@@ -155,7 +165,7 @@ In fact, this approach has been leveraged before for counterfactual explanations
 
 *(this is actually from the PhD thesis)*
 
-### (b) Train a deep generative model on the classification latent space
+### Train a deep generative model on the classification latent space
 
 An alternative solution would be to train a full deep generative model on the penultimate layer of the classifier. That is, take each training sample $x_i$, extract its penultimate-layer embedding $\mathbf{a}_i$, and **train a new VAE** (or generative model) with encoder $\mathrm{Enc}(\mathbf{a})$ and decoder $\mathrm{Dec}(\mathbf{z})$ *so that it reconstructs the original input* $x_i$ from the latent code $\mathbf{z}$  that is tied to $\mathbf{a}_i$.
 
@@ -163,7 +173,7 @@ This solution feels a little hacky, but in principle it should be fine. Here, we
 
 ---
 
-## 5) Projecting changes back to the input space
+## Projecting changes back to the input space
 
 This section describes what we might do as an alternative to generating new data points from the classification latent space. If we truly want *counterfactual explanations,* then yes, we will need generative capacity. However, we might also seek simply to *project* the changes in latent space back to the input space - more akin to a **feature attribution** method. 
 
@@ -175,7 +185,7 @@ While this involved movement in the input space, a paper “Attribution of predi
 
 ---
 
-## 6) Outlandish idea - hierarchical counterfactual search
+## Outlandish idea - hierarchical counterfactual search
 
 This idea is a bit overly elaborate, and may not be possible to implement in time, but I find it interesting to lay out regardless. Let’s reconsider the paper where new, counterfactual points are generated with no generative model. They simply use gradient information from the prediction (classic saliency map) to update the values of inputs dimensions, while using the epistemic and aleatoric uncertainties to keep them on manifold. But integrated gradients claim to improve precisely these types of saliency maps upon which the update step of this method is based. Furthermore, in the section [5) Projecting changes back to the input space](#5-projecting-changes-back-to-the-input-space) we discuss a method of integrating gradients along path in the classification latent space to produce even better saliency maps.
 
@@ -201,7 +211,7 @@ What if we used *these* saliency maps for the input dimension updates? Since the
 
 I’m excited by this because it feels like truly *my idea,* but I frankly don’t think I’ll have the time to implement it.
 
-## 7) Roadmap
+## Roadmap
 In this section, we actually set out the various things I could (and hopefully will!) implement. The goal is to remove all risk - I will certainly be able to implement some of these proposals, and even one successfully implemented idea is enough.
 
 | Phase | Description |

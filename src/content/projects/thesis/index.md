@@ -7,12 +7,13 @@ repoURL: "https://github.com/confinlay/Last-layer-CLUE"
 
 This year I'm working on a research project in the area of Bayesian Deep Learning as part of my Master's degree in Computer Engineering. It's still a work-in-progress, but I've included an adapted version of my project proposal below. I'll try to update this often as the scope/direction of my project evolves, but I'll certainly be writing a more detailed blog post on the project once it's complete.
 
+<aside>
 
-> ### TLDR
-> Bayesian neural networks differ from traditional neural networks in that they express a more theoretically grounded estimate of their uncertainty. While uncertainty estimates provide a level of interpretability in and of themselves, work has been done in the Explainable AI (XAI) community to provide **explanations** for these uncertainty estimates.
-> These explanations for uncertainty often involve using separate generative models to find counterfactuals which explain the uncertainty in the original prediction. This project seeks to investigate how recent advances in partially Bayesian inference can allow for Bayesian neural networks which are **inherently interpretable**.
+### TLDR
+Bayesian neural networks differ from traditional neural networks in that they express a more theoretically grounded estimate of their uncertainty. While uncertainty estimates provide a level of interpretability in and of themselves, work has been done in the Explainable AI (XAI) community to provide **explanations** for these uncertainty estimates.
+These explanations for uncertainty often involve using separate generative models to find counterfactuals which explain the uncertainty in the original prediction. This project seeks to investigate how recent advances in partially Bayesian inference can allow for Bayesian neural networks which are **inherently interpretable**.
 
-
+</aside>
 
 
 ## Background and Motivation
