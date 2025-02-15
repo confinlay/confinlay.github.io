@@ -33,7 +33,7 @@ Aside from this taxonomy, we can also categorise explanations as one of the foll
 
 *(for this project, we don’t consider rule-based methods)*
 
-There are many approaches to **feature attribution.** Classic methods include LIME and SHAP, which are perturbation-based and game theory-based, respectively. This both involve making many alterations to the input and observing the results.
+There are many approaches to **feature attribution.** Classic methods include LIME and SHAP, which are perturbation-based and game theory-based, respectively. They both involve making many different alterations to the input and observing the effects on the output.
 
 There are also gradient-based approaches:  in its simplest form, this involves backpropagating the gradients of the prediction with respect to the input features. GRAD-cam upsamples the gradients of the prediction with respect to the final layer to the input dimensions, producing a coarse heatmap of importance. Integrated gradients (INTGRAD) involves moving from a null point (e.g. a black image for image data) to the data point of interest, and observing the gradients of the prediction at each step. All these gradients along the path are integrated, producing a saliency map over the input dimensions.
 
