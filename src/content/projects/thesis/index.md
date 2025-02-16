@@ -5,7 +5,9 @@ date: "Nov 12 2024"
 repoURL: "https://github.com/confinlay/Last-layer-CLUE"
 ---
 
-This year I'm working on a research project in the area of Bayesian Deep Learning as part of my Master's degree in Computer Engineering. It's still a work-in-progress, but I've included an adapted version of my project proposal below. I'll try to update this often as the scope/direction of my project evolves, but I'll certainly be writing a more detailed blog post on the project once it's complete.
+This year I'm working on a research project in the area of Bayesian Deep Learning as part of my Master's degree in Computer Engineering. It's still a work-in-progress, but I've included an adapted version of my initial project proposal below. I'll try to update this often as the scope/direction of my project evolves, but I'll certainly be writing a more detailed blog post on the project once it's complete.
+
+*Update: I've since published a [blog post](https://conorfinlay.me/projects/thesis-final-plan/) which further develops some of the ideas in this proposal and sets out a roadmap for the project.*
 
 <aside>
 
