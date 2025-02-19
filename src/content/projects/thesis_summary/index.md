@@ -1,5 +1,5 @@
 ---
-title: "Counterfactuals Explanations from the Latent Space"
+title: "Counterfactuals Explanations from Internal Representations"
 description: "A summary of my Master's thesis on Bayesian deep learning"
 date: "Feb 18 2025"
 repoURL: "https://github.com/confinlay/Last-layer-CLUE"
