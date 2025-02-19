@@ -1,5 +1,5 @@
 ---
-title: "Explanations from the Latent Space"
+title: "Explainable AI and Bayesian Last-Layers"
 description: "A roadmap for my Master's thesis"
 date: "Feb 14 2025"
 toc: true
