@@ -18,7 +18,7 @@ In practice, most counterfactual explanation methods leverage a deep generative 
 
 1. For $n$ optimisation steps to find a counterfactual, we need to make $n$ forward passes through the generative model. This can be quite slow for complex datasets and models.
 2. The latent space of the generative model is not aligned with the learned representations of the classification model. This means that the counterfactuals generated may be adversarial examples (i.e. highly irregular outliers to the underlying decision-making process of the classifier) and thus don't truly explain the local decision boundary.
-3. The quality the of our explanation process for the classification model is dependent on the quality of the generative model. For complex problems where generating high-quality samples is difficult, this is a challenge.
+3. The quality of our explanation process for the classification model is dependent on the quality of the generative model. For complex problems where generating high-quality samples is difficult, this is a challenge.
 
 In a way, this approach of using a generative model to produce counterfactuals is overkill. We don't truly need the capacity to sample new data points from the input distribution, we simply need to find meaningful changes to existing data. In this sense, we are only using the generative model to approximate the data manifold. However, as we'll see later, there are other proxies for the data manifold that we can leverage to this end.
 
