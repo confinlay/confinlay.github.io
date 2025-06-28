@@ -74,8 +74,6 @@ My goal in this dissertation is to take inspiration from both of these. A separa
 
 ## Finding counterfactuals and impositions of linearity
 
-This section should discuss the big thesis, how these approaches seem to rely on simple, linear classifiers such that the decision boundary is easily identifiable. Overly simple models are implied to be necessary for interpretability.
-
 We have already discussed methods which explore a latent space which models the data distribution in order to find counterfactuals. The latent space does not model the behaviour of the classifier, it is simply there to identify meaningful directions in the input space. There are methods, however, which have proposed exploring the latent space upon which a classifier draws its decision boundary in order to find counterfactuals. These methods tend to rely on *linearity*.
 
 - The paper “An Interpretable Deep Classifier for Counterfactual Generation”[^3] imposes a supervised objective on a generative model (a VAE + normalising flows). However, the classifier is a Bayesian probit linear regression model, and the method relies on this by finding a trajectory in latent space which crosses the decision boundary. This is in contrast with the gradient-descent optimisation, which is necessary to cross a highly non-linear decision boundary in a neural network classifier.
@@ -186,7 +184,7 @@ The main proposal here would be to follow the **integrated gradients** approach.
 
 While this involved movement in the input space, a paper “Attribution of predictive uncertainties in classification models”[^8] adopts the CLUE approach of optimising in the latent space of a deep generative model. The approach didn’t actually require the generative capacity of the DGM, the simply used the latent space as a proxy for the data manifold. The authors optimise in latent space, like for CLUE, but then propagated the gradients of the prediction back to the input dimensions. Using the same path integral approach as INTGRAD but for the purpose of explaining uncertainty, this paper shows how we can project changes in some latent space back to the input dimensions. We could do the same, only for the latent space of the classification model.
 
----
+<!-- ---
 
 ## Outlandish idea - hierarchical counterfactual search
 
@@ -212,7 +210,7 @@ What if we used *these* saliency maps for the input dimension updates? Since the
         1. The classifier’s predictive entropy is sufficiently low.
         2. The change in $x$ stabilizes.
 
-I’m excited by this because it feels like truly *my idea,* but I frankly don’t think I’ll have the time to implement it.
+I’m excited by this because it feels like truly *my idea,* but I frankly don’t think I’ll have the time to implement it. -->
 
 ## Roadmap
 In this section, we actually set out the various things I could (and hopefully will!) implement. The goal is to remove all risk - I will certainly be able to implement some of these proposals, and even one successfully implemented idea is enough.
