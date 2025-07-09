@@ -3,7 +3,7 @@ company: "InstaDeep"
 role: "Research Engineer"
 dateStart: "06/01/2025" 
 dateEnd: "Present"
-summary: "Currently researching scaling laws for hyperparameter optimization in deep reinforcement learning at InstaDeep, an AI company and subsidiary of BioNTech."
+summary: "Currently working on scaling up deep reinforcement learning at InstaDeep, an AI company and subsidiary of BioNTech."
 ---
 
 Currently working on scaling up deep reinforcement learning at InstaDeep, which specialises in decision-making AI systems for enterprise applications.
