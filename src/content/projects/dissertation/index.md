@@ -74,8 +74,6 @@ Initial experiments suggest that this approach is both computationally efficient
 -   Applications beyond class changes, such as explaining model uncertainty directly.
     -->
 
-# Counterfactual Explanations from Internal Representations
-
 This year I've been working on my Master's dissertation in the area of Bayesian Deep Learning. The focus of the project has been on developing a new method for generating counterfactual explanations — explanations that tell us what minimal changes to an input would have led a model to make a different decision.
 
 In this post, I'll give an overview of the background to the problem, the method I've proposed, and the main motivations that shaped the design.
@@ -90,7 +88,7 @@ The challenge lies in generating counterfactuals that are realistic. Most existi
 
 This project explores a different approach: instead of relying on a separate generative model's latent space, can we generate counterfactuals directly from the classifier's own internal representations?
 
-![Illustration of the method](./thesis_images/OurPropsal.png)
+![Illustration of the method](./public/thesis_images/OurProposal.png)
 
 The method proceeds in three stages:
 
@@ -123,14 +121,12 @@ The design of the method was guided by four main motivations:
 **1. A discriminative space for counterfactuals**  
 Most existing work uses the latent space of a generative model to approximate the data manifold. However, these spaces are unsupervised and not necessarily aligned with the classifier's decision boundary. Bodria (2023) provides a key insight: the latent space used for counterfactual search should be discriminative, organising data so that instances with the same prediction are close together. As illustrated below, such spaces yield counterfactuals that explain the global decision boundary rather than identifying nearby outliers or adversarial examples. While conditional generative models could inject label information, we instead leverage the classifier's own discriminative latent space at the penultimate layer, where class structure and prototypes are already encoded.
 
-![Bodria's insight](./thesis_images/BodriaImage.png)
+![Bodria's insight](./public/thesis_images/BodriaImage.png)
 
 **2. Human counterfactuals and similarity**  
 Studies by Delaney et al. comparing human- and machine-generated counterfactuals show that humans tend to make larger, more semantic edits that move inputs closer to prototypes of the target class. This may align with the structure of the penultimate layer: Seo et al. theorise that the final layer's weights represent class prototypes, serving as mean directions for the von Mises-Fisher distribution of penultimate activations. If this theoretical framework holds, then distances in the penultimate space could correspond more closely to human notions of similarity than distances in input space, potentially yielding more prototypical counterfactuals as recommended by human studies.
 
-![Seo's framework](./thesis_images/PenultimateActivations.png)
-
-![Human counterfactuals](./thesis_images/HumanCounterfactuals.png)
+![Human counterfactuals](./public/thesis_images/HumanCounterfactuals.png)
 
 **3. Bayesian last-layer robustness**  
 One risk when perturbing latent representations is that counterfactuals might drift into unrealistic or adversarial regions. The Bayesian last-layer architecture addresses this directly: since all uncertainty estimation is concentrated in the final layer, we can perturb penultimate embeddings while preserving the strong uncertainty quantification of the Bayesian layer. Bayesian neural networks provide intrinsic adversarial robustness and show low confidence for out-of-distribution examples, making them well-suited for counterfactual generation. During optimisation, the Bayesian last layer's gradients should guide the search towards realistic, in-distribution embeddings while remaining robust to adversarial perturbations in the embedding space.
